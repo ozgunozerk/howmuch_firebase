@@ -5,7 +5,7 @@ import {Request, Response} from "express";
 import * as dotenv from "dotenv";
 import {setAssetTable} from "../src/index";
 import {AssetType} from "../src/types";
-import {bist50, crypto100, forex31, nasdaq104} from "../src/server/asset_list";
+import {bist50, crypto100, forex30, nasdaq104} from "../src/server/asset_list";
 
 const projectId = "demo-project";
 const test = firebaseFunctionsTest({
@@ -50,7 +50,7 @@ describe("Asset List Functions", () => {
     const assetTable = {
       [AssetType.CRYPTO]: crypto100,
       [AssetType.NASDAQ]: nasdaq104,
-      [AssetType.FOREX]: forex31,
+      [AssetType.FOREX]: forex30,
       [AssetType.BIST]: bist50,
     };
 
