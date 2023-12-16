@@ -159,7 +159,7 @@ export const bist50 = {
   YKBNK: "YAPI VE KREDI BANK.",
 };
 
-export const forex31 = {
+export const forex30 = {
   "USD": "United States Dollar",
   "EURUSD": "Euro",
   "JPYUSD": "Japanese Yen",
@@ -187,7 +187,6 @@ export const forex31 = {
   "ILSUSD": "Israeli New Shekel",
   "PHPUSD": "Philippine Peso",
   "MYRUSD": "Malaysian Ringgit",
-  "ISKUSD": "Icelandic Króna",
   "DKKUSD": "Danish Krone",
   "XAUUSD": "Gold",
   "XAGUSD": "Silver",
