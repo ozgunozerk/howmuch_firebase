@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-export const nasdaq104 = {
+export const nasdaq103 = {
   "AAPL": "Apple Inc",
   "MSFT": "Microsoft Corp",
   "AMZN": "Amazon.com Inc",
@@ -66,7 +66,6 @@ export const nasdaq104 = {
   "KHC": "Kraft Heinz Co/The",
   "IDXX": "IDEXX Laboratories Inc",
   "AEP": "American Electric Power Co Inc",
-  "SGEN": "Seagen Inc",
   "ODFL": "Old Dominion Freight Line Inc",
   "FTNT": "Fortinet Inc",
   "EXC": "Exelon Corp",

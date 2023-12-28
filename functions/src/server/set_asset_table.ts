@@ -2,7 +2,7 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as dotenv from "dotenv";
 import {AssetType} from "../types";
-import {bist50, crypto100, forex30, nasdaq104} from "./asset_list";
+import {bist50, crypto100, forex30, nasdaq103} from "./asset_list";
 
 dotenv.config();
 
@@ -31,7 +31,7 @@ export const setAssetTable = functions
       try {
         const assetTable = {
           [AssetType.CRYPTO]: crypto100,
-          [AssetType.NASDAQ]: nasdaq104,
+          [AssetType.NASDAQ]: nasdaq103,
           [AssetType.FOREX]: forex30,
           [AssetType.BIST]: bist50,
         };
