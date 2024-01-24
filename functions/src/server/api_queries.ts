@@ -29,7 +29,7 @@ const fetchWithRetries = async (
     } catch (error) {
       if (attempt === maxRetries) {
         // If it's the last attempt, throw the error
-        throw error;
+        throw new Error(`Maximum tries reached for fetchWithRetries for url: ${url}, with error: ${error}`);
       }
 
       // If not the last attempt, wait and then retry
@@ -142,7 +142,7 @@ const createCryptoMapFromCoinGeckoIDs = async (
             coin.name !== undefined && coin.symbol !== undefined) {
         cryptoMap[coingeckoID] = {"symbol": coin.symbol, "name": coin.name};
       } else {
-        throw new Error("Coin id is undefined");
+        throw new Error(`Coin id is undefined for: ${coin}`);
       }
     });
 
