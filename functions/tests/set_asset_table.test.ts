@@ -5,7 +5,7 @@ import { type Request, type Response } from 'express'
 import * as dotenv from 'dotenv'
 import { setAssetTable } from '../src/index'
 import { AssetType } from '../src/types'
-import { bist50, crypto100, forex30, nasdaq103 } from '../src/server/asset_list'
+import { bist100, crypto100, forex30, nasdaq103 } from '../src/server/asset_list'
 
 const projectId = 'demo-project'
 const test = firebaseFunctionsTest({
@@ -53,7 +53,7 @@ describe('Asset List Functions', () => {
       [AssetType.CRYPTO]: crypto100,
       [AssetType.NASDAQ]: nasdaq103,
       [AssetType.FOREX]: forex30,
-      [AssetType.BIST]: bist50
+      [AssetType.BIST]: bist100
     }
 
     expect(assetDoc.data()).to.deep.equal(assetTable)

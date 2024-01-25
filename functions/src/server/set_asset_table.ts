@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
 import * as dotenv from 'dotenv'
 import { AssetType } from '../types'
-import { bist50, crypto100, forex30, nasdaq103 } from './asset_list'
+import { bist100, crypto100, forex30, nasdaq103 } from './asset_list'
 
 dotenv.config()
 
@@ -33,7 +33,7 @@ export const setAssetTable = functions
         [AssetType.CRYPTO]: crypto100,
         [AssetType.NASDAQ]: nasdaq103,
         [AssetType.FOREX]: forex30,
-        [AssetType.BIST]: bist50
+        [AssetType.BIST]: bist100
       }
       await db.collection('server').doc('asset_table').set(assetTable)
       res.status(200).send('Asset table has been updated.')
