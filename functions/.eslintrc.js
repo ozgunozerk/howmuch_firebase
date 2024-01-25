@@ -1,33 +1,35 @@
 module.exports = {
-  root: true,
   env: {
     es6: true,
-    node: true,
+    node: true
   },
-  extends: [
-    "eslint:recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:import/typescript",
-    "google",
-    "plugin:@typescript-eslint/recommended",
+  extends: 'standard-with-typescript',
+  overrides: [
+    {
+      env: {
+        node: true
+      },
+      files: [
+        '.eslintrc.{js,cjs}'
+      ],
+      parserOptions: {
+        sourceType: 'script'
+      }
+    }
   ],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    project: ["tsconfig.json", "tsconfig.dev.json"],
-    sourceType: "module",
-  },
+  parser: '@typescript-eslint/parser',
   ignorePatterns: [
-    "/lib/**/*", // Ignore built files.
+    '/lib/**/*' // Ignore built files.
   ],
-  plugins: [
-    "@typescript-eslint",
-    "import",
-  ],
-  rules: {
-    "quotes": ["error", "double"],
-    "import/no-unresolved": 0,
-    "no-unused-vars": ["error", {"argsIgnorePattern": "^_"}],
-    "@typescript-eslint/no-unused-vars": ["error", {"argsIgnorePattern": "^_"}],
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module'
   },
-};
+  rules: {
+    '@typescript-eslint/strict-boolean-expressions': 'off',
+    '@typescript-eslint/restrict-template-expressions': 'off',
+    'import/no-unresolved': 0,
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
+  }
+}

@@ -1,4 +1,4 @@
-import * as admin from "firebase-admin";
+import type * as admin from 'firebase-admin'
 
 /**
  * Creates a mock user record for use in Firebase tests.
@@ -9,32 +9,32 @@ import * as admin from "firebase-admin";
  * @return {admin.auth.UserRecord} - A mock user record with the provided
  *   uid and email, along with some preset values for the other properties.
  */
-export function createUserRecord(
-    uid: string,
-    email: string
+export function createUserRecord (
+  uid: string,
+  email: string
 ): admin.auth.UserRecord {
   return {
-    uid: uid,
-    email: email,
+    uid,
+    email,
     emailVerified: false,
-    displayName: "Test User",
-    phoneNumber: "+11234567890",
-    photoURL: "https://example.com/photo.png",
+    displayName: 'Test User',
+    phoneNumber: '+11234567890',
+    photoURL: 'https://example.com/photo.png',
     disabled: false,
     metadata: {
-      lastSignInTime: "string",
-      creationTime: "string",
-      toJSON: function() {
-        return {};
-      },
+      lastSignInTime: 'string',
+      creationTime: 'string',
+      toJSON: function () {
+        return {}
+      }
     },
     providerData: [],
-    passwordSalt: "123",
-    passwordHash: "123",
-    tokensValidAfterTime: "string",
-    tenantId: "string",
-    toJSON: function() {
-      return {};
-    },
-  };
+    passwordSalt: '123',
+    passwordHash: '123',
+    tokensValidAfterTime: 'string',
+    tenantId: 'string',
+    toJSON: function () {
+      return {}
+    }
+  }
 }

@@ -1,12 +1,11 @@
-import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
-import { getCryptoRates, getAssetPrices } from "./api_queries";
+import * as functions from 'firebase-functions'
+import * as admin from 'firebase-admin'
+import { getCryptoRates, getAssetPrices } from './api_queries'
 import {
   AssetType,
-  AssetTable,
-  PriceTable,
-} from "../types";
-import { error } from "firebase-functions/logger";
+  type AssetTable,
+  type PriceTable
+} from '../types'
 
 /**
  * Triggers a scheduled function to update server asset prices.
@@ -15,44 +14,43 @@ import { error } from "firebase-functions/logger";
  *   are successfully updated.
  */
 export const createPriceTable = functions
-  .region("europe-west1")
-  .pubsub.schedule("55 5,11,17,23 * * *") // run at 05.55, 11.55, 17.55, 23.55
-  .timeZone("UTC")
+  .region('europe-west1')
+  .pubsub.schedule('55 5,11,17,23 * * *') // run at 05.55, 11.55, 17.55, 23.55
+  .timeZone('UTC')
   .onRun(async (_context) => {
     // Get today's date in UTC and format it -> YYYY-MM-DD-HH
-    const today = new Date();
+    const today = new Date()
     // add 5 minutes to make it 06.00, 12.00, 18.00, 00.00
-    today.setMinutes(today.getMinutes() + 5);
+    today.setMinutes(today.getMinutes() + 5)
 
     const formattedDate = `${today.getUTCFullYear()}-${(today.getUTCMonth() +
-      1).toString().padStart(2, "0")}-${today.getUTCDate()
-        .toString().padStart(2, "0")}-${today.getUTCHours()
-          .toString().padStart(2, "0")}`;
+      1).toString().padStart(2, '0')}-${today.getUTCDate()
+        .toString().padStart(2, '0')}-${today.getUTCHours()
+          .toString().padStart(2, '0')}`
 
     // Query the APIs and get the asset prices
-    let assetPrices;
+    let assetPrices
     try {
-      assetPrices = await queryApis();
+      assetPrices = await queryApis()
     } catch (error) {
       functions.logger.error(
         `couldn't fetch prices on server side for date: ${formattedDate}`
-      );
+      )
       functions.logger.error(
         `with the following error: ${error}`
       )
-      return;
+      return
     }
 
     // Create a new snapshot document with the updated data
     await admin
       .firestore()
-      .collection("price-tables")
+      .collection('price-tables')
       .doc(formattedDate)
-      .set(assetPrices);
+      .set(assetPrices)
 
-    functions.logger.log("Server asset prices updated successfully!");
-  });
-
+    functions.logger.log('Server asset prices updated successfully!')
+  })
 
 /**
  * Queries APIs for asset prices, and maps them according to their types.
@@ -65,44 +63,43 @@ export const createPriceTable = functions
  *   or a rate was not found.
  */
 export const queryApis = async (): Promise<PriceTable> => {
-  const db = admin.firestore();
+  const db = admin.firestore()
 
   // Fetch the asset table from Firestore
-  const assetDoc = await db.collection("server").doc("asset_table").get();
+  const assetDoc = await db.collection('server').doc('asset_table').get()
 
-  const assetData = assetDoc.data() as AssetTable;
+  const assetData = assetDoc.data() as AssetTable
 
   if (!assetData) {
-    functions.logger.error("asset table could not be fetched from Firestore");
-    throw error("asset table could not be fetched from Firestore");
+    functions.logger.error('asset table could not be fetched from Firestore')
+    throw new Error('asset table could not be fetched from Firestore')
   }
 
   // Destructure the assetData
-  const cryptoIDs = Object.keys(assetData[AssetType.CRYPTO]);
-  const nasdaqIDs = Object.keys(assetData[AssetType.NASDAQ]);
-  const forexIDs = Object.keys(assetData[AssetType.FOREX]);
-  const bistIDs = Object.keys(assetData[AssetType.BIST]);
+  const cryptoIDs = Object.keys(assetData[AssetType.CRYPTO])
+  const nasdaqIDs = Object.keys(assetData[AssetType.NASDAQ])
+  const forexIDs = Object.keys(assetData[AssetType.FOREX])
+  const bistIDs = Object.keys(assetData[AssetType.BIST])
 
   try {
     // Fetch the rates for each assetType directly
     const [cryptoMap, nasdaqMap, forexMap, bistMap] = await Promise.all([
       getCryptoRates(cryptoIDs),
-      getAssetPrices(nasdaqIDs, ".US"),
-      getAssetPrices(forexIDs, ".FOREX"),
-      getAssetPrices(bistIDs, ".IS"),
-    ]);
+      getAssetPrices(nasdaqIDs, '.US'),
+      getAssetPrices(forexIDs, '.FOREX'),
+      getAssetPrices(bistIDs, '.IS')
+    ])
 
     // Create an object for the categories
     const priceTable: PriceTable = {
       crypto: cryptoMap,
       nasdaq: nasdaqMap,
       forex: forexMap,
-      bist: bistMap,
-    };
+      bist: bistMap
+    }
 
-    return priceTable;
+    return priceTable
   } catch (error) {
-    functions.logger.error(error);
-    throw error;
+    throw new Error(`Querying APIs failed with error: ${error}`)
   }
-};
+}

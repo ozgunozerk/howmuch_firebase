@@ -1,6 +1,6 @@
-import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
-import {UserTransactions} from "../types";
+import * as functions from 'firebase-functions'
+import * as admin from 'firebase-admin'
+import { type UserTransactions } from '../types'
 
 /**
  * Firebase Cloud Function to get a user's transactions.
@@ -19,40 +19,40 @@ import {UserTransactions} from "../types";
  *   or the user's document is empty.
  */
 export const fetchTransactions = functions
-    .region("europe-west1")
-    .https.onCall(
-        async (
-            _data,
-            context: functions.https.CallableContext
-        ): Promise<UserTransactions> => {
-          if (!context.auth) {
-            throw new functions.https.HttpsError(
-                "unauthenticated",
-                "only authenticated users can get assets"
-            );
-          }
+  .region('europe-west1')
+  .https.onCall(
+    async (
+      _data,
+      context: functions.https.CallableContext
+    ): Promise<UserTransactions> => {
+      if (!context.auth) {
+        throw new functions.https.HttpsError(
+          'unauthenticated',
+          'only authenticated users can get assets'
+        )
+      }
 
-          const transactionsCollection = await admin
-              .firestore()
-              .collection("users")
-              .doc(context.auth.uid)
-              .collection("transactions")
-              .get();
+      const transactionsCollection = await admin
+        .firestore()
+        .collection('users')
+        .doc(context.auth.uid)
+        .collection('transactions')
+        .get()
 
-          // Check if the collection exists
-          if (transactionsCollection.empty) {
-            return {}; // Return an empty object if the collection is empty
-          }
+      // Check if the collection exists
+      if (transactionsCollection.empty) {
+        return {} // Return an empty object if the collection is empty
+      }
 
-          // Accumulate transactions from all documents into a single object
-          const allTransactions: UserTransactions = {};
-          transactionsCollection.forEach((doc) => {
-            const data = doc.data();
-            if (data) {
-              Object.assign(allTransactions, data);
-            }
-          });
-
-          return allTransactions;
+      // Accumulate transactions from all documents into a single object
+      const allTransactions: UserTransactions = {}
+      transactionsCollection.forEach((doc) => {
+        const data = doc.data()
+        if (data) {
+          Object.assign(allTransactions, data)
         }
-    );
+      })
+
+      return allTransactions
+    }
+  )

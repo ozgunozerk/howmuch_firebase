@@ -1,6 +1,6 @@
-import * as admin from "firebase-admin";
-import * as functions from "firebase-functions";
-import {PriceTable, PriceTables} from "../types";
+import * as admin from 'firebase-admin'
+import * as functions from 'firebase-functions'
+import { type PriceTable, type PriceTables } from '../types'
 
 /**
  * Firebase Cloud Function to fetch the price table from Firestore.
@@ -21,49 +21,49 @@ import {PriceTable, PriceTables} from "../types";
  *   "price_table" document does not exist or if there's any internal error.
  */
 export const fetchPriceTables = functions
-    // .runWith({ enforceAppCheck: true, }) // enable this for DDoS if necessary
-    .region("europe-west1")
-    .https.onCall(
-        async (
-            data: { latestPriceTableDate?: string },
-            context: functions.https.CallableContext
-        ): Promise<PriceTables> => {
-          if (!context.auth) {
-            throw new functions.https.HttpsError(
-                "unauthenticated",
-                "only authenticated users can get assets"
-            );
-          }
+// .runWith({ enforceAppCheck: true, }) // enable this for DDoS if necessary
+  .region('europe-west1')
+  .https.onCall(
+    async (
+      data: { latestPriceTableDate?: string },
+      context: functions.https.CallableContext
+    ): Promise<PriceTables> => {
+      if (!context.auth) {
+        throw new functions.https.HttpsError(
+          'unauthenticated',
+          'only authenticated users can get assets'
+        )
+      }
 
-          const db = admin.firestore();
-          let priceTablesQuery: admin.firestore.Query =
-                db.collection("price-tables");
+      const db = admin.firestore()
+      let priceTablesQuery: admin.firestore.Query =
+                db.collection('price-tables')
 
-          if (data.latestPriceTableDate) {
-            priceTablesQuery = priceTablesQuery.where(
-                admin.firestore.FieldPath.documentId(),
-                ">",
-                data.latestPriceTableDate
-            );
-          }
+      if (data.latestPriceTableDate) {
+        priceTablesQuery = priceTablesQuery.where(
+          admin.firestore.FieldPath.documentId(),
+          '>',
+          data.latestPriceTableDate
+        )
+      }
 
-          try {
-            const queryResult = await priceTablesQuery.get();
-            if (queryResult.empty) {
-              return {};
-            } else {
-              const priceTables: PriceTables = {};
-              queryResult.docs.forEach((doc) => {
-                priceTables[doc.id] = doc.data() as PriceTable;
-              });
-              return priceTables;
-            }
-          } catch (err) {
-            throw new functions.https.HttpsError(
-                "internal",
-                "could not fetch price tables",
-                err
-            );
-          }
+      try {
+        const queryResult = await priceTablesQuery.get()
+        if (queryResult.empty) {
+          return {}
+        } else {
+          const priceTables: PriceTables = {}
+          queryResult.docs.forEach((doc) => {
+            priceTables[doc.id] = doc.data() as PriceTable
+          })
+          return priceTables
         }
-    );
+      } catch (err) {
+        throw new functions.https.HttpsError(
+          'internal',
+          'could not fetch price tables',
+          err
+        )
+      }
+    }
+  )

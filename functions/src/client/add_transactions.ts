@@ -1,6 +1,6 @@
-import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
-import {UserTransactions} from "../types";
+import * as functions from 'firebase-functions'
+import * as admin from 'firebase-admin'
+import { type UserTransactions } from '../types'
 
 /**
  * @function addTransactions
@@ -15,30 +15,30 @@ import {UserTransactions} from "../types";
  * @throws {functions.https.HttpsError} If the user is unauthenticated.
  */
 export const addTransactions = functions
-    .region("europe-west1")
-    .https.onCall(
-        async (
-            data: UserTransactions,
-            context: functions.https.CallableContext
-        ) => {
-          // Check if the user is authenticated
-          if (!context.auth) {
-            throw new functions.https.HttpsError(
-                "unauthenticated",
-                "only authenticated users can set assets"
-            );
-          }
+  .region('europe-west1')
+  .https.onCall(
+    async (
+      data: UserTransactions,
+      context: functions.https.CallableContext
+    ) => {
+      // Check if the user is authenticated
+      if (!context.auth) {
+        throw new functions.https.HttpsError(
+          'unauthenticated',
+          'only authenticated users can set assets'
+        )
+      }
 
-          // Get the current date
-          const currentYear = new Date().getFullYear();
+      // Get the current date
+      const currentYear = new Date().getFullYear()
 
-          // append the transactions
-          await admin
-              .firestore()
-              .collection("users")
-              .doc(context.auth.uid)
-              .collection("transactions")
-              .doc(`transactions_${currentYear}`)
-              .set(data, {merge: true});
-        }
-    );
+      // append the transactions
+      await admin
+        .firestore()
+        .collection('users')
+        .doc(context.auth.uid)
+        .collection('transactions')
+        .doc(`transactions_${currentYear}`)
+        .set(data, { merge: true })
+    }
+  )
