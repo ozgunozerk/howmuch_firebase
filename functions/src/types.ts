@@ -27,6 +27,15 @@ export interface EODAssetEntry {
 // Define a type for the overall response
 export type EODApiResponse = EODAssetEntry[]
 
+export interface MetalsDevResponse {
+  status: string
+  currency: string
+  unit: string
+  metals: Record<string, number>
+  currencies: Record<string, number>
+  timestamps: Record<string, string>
+}
+
 export interface Transaction {
   assetType: string
   assetId: string

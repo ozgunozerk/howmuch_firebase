@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
-import { getCryptoRates, getAssetPrices } from './api_queries'
+import { getCryptoRates, getAssetPrices, getMetalPrices } from './api_queries'
 import {
   AssetType,
   type AssetTable,
@@ -89,6 +89,14 @@ export const queryApis = async (): Promise<PriceTable> => {
       getAssetPrices(forexIDs, '.FOREX'),
       getAssetPrices(bistIDs, '.IS')
     ])
+
+    // @ts-expect-error: EOD may return "NA" instead of a number, especially for gold and silver
+    // this acts as a fallback mechanism
+    if (forexMap.XAGUSD === 'NA' || forexMap.XAUUSD === 'NA') {
+      const goldAndSilverPrices = await getMetalPrices()
+      forexMap.XAUUSD = goldAndSilverPrices.XAUUSD
+      forexMap.XAGUSD = goldAndSilverPrices.XAGUSD
+    }
 
     // Create an object for the categories
     const priceTable: PriceTable = {

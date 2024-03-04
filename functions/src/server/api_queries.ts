@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
 import { CoinGeckoClient } from 'coingecko-api-v3'
-import { type PriceTableEntries, type EODApiResponse, type EODAssetEntry } from '../types'
+import { type PriceTableEntries, type EODApiResponse, type EODAssetEntry, type MetalsDevResponse } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fetch = require('node-fetch')
 
@@ -13,6 +13,7 @@ const coinGeckoClient = new CoinGeckoClient({
 })
 
 const EOD_API_KEY = process.env.EOD_API_KEY
+const METALS_DEV_KEY = process.env.METALS_DEV_KEY
 
 const fetchWithRetries = async (
   url: string
@@ -73,6 +74,30 @@ export const getAssetPrices = async (
       const symbolWithoutPostfix = symbol.replace(postfix, '')
       rates[symbolWithoutPostfix] = entry.close
     })
+
+    return rates
+  } catch (err) {
+    throw new Error(`Couldn't fetch rates, because: ${err}`)
+  }
+}
+
+/**
+ * Fetches the current exchange rates for gold and silver.
+ *
+ * @param {string[]} symbols - An array of symbols.
+ * @return {Promise<PriceTableEntries>} A Promise resolving with an object
+ *   of symbols to their exchange rates.
+ *
+ * @throws {Error} An error message if the exchange rates could not be fetched.
+ */
+export const getMetalPrices = async (): Promise<PriceTableEntries> => {
+  const url = `https://api.metals.dev/v1/latest?api_key=${METALS_DEV_KEY}&currency=USD&unit=toz'`
+  try {
+    const fetchedData = await fetchWithRetries(url)
+    const response = (await fetchedData.json()) as MetalsDevResponse
+    const rates: PriceTableEntries = {}
+    rates.XAUUSD = response.metals.gold
+    rates.XAGUSD = response.metals.silver
 
     return rates
   } catch (err) {
